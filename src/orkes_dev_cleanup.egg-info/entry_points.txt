@@ -1,2 +1,0 @@
-[console_scripts]
-orkes-cleanup = orkes_dev_cleanup.cli:main
