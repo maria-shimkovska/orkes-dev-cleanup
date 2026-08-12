@@ -1,0 +1,2 @@
+conductor-python>=0.0.1
+requests>=2.28
