@@ -10,6 +10,9 @@ from collections import defaultdict
 import requests
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
+from conductor.client.orkes.orkes_prompt_client import OrkesPromptClient
+from conductor.client.orkes.orkes_scheduler_client import OrkesSchedulerClient
+from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
 
 
 # ---------------------------------------------------------------------------
@@ -92,6 +95,108 @@ def delete_tasks(server_url: str, yes: bool = False) -> tuple[int, int]:
             deleted += 1
         except Exception as e:
             print(f"  Failed:  {task.name} -> {e}")
+            errors += 1
+
+    return deleted, errors
+
+
+# ---------------------------------------------------------------------------
+# AI prompts
+# ---------------------------------------------------------------------------
+
+def delete_prompts(server_url: str, yes: bool = False) -> tuple[int, int]:
+    config = Configuration(server_api_url=server_url, debug=False)
+    client = OrkesPromptClient(config)
+
+    prompts = client.get_prompts()
+    if not prompts:
+        print("No AI prompts found.")
+        return 0, 0
+
+    print(f"\nFound {len(prompts)} AI prompt(s):\n")
+    for prompt in sorted(prompts, key=lambda p: p.name):
+        print(f"  {prompt.name}")
+
+    if not yes and not _confirm(len(prompts), "AI prompt"):
+        sys.exit(0)
+
+    print()
+    deleted, errors = 0, 0
+    for prompt in prompts:
+        try:
+            client.delete_prompt(prompt.name)
+            print(f"  Deleted: {prompt.name}")
+            deleted += 1
+        except Exception as e:
+            print(f"  Failed:  {prompt.name} -> {e}")
+            errors += 1
+
+    return deleted, errors
+
+
+# ---------------------------------------------------------------------------
+# Schedules
+# ---------------------------------------------------------------------------
+
+def delete_schedules(server_url: str, yes: bool = False) -> tuple[int, int]:
+    config = Configuration(server_api_url=server_url, debug=False)
+    client = OrkesSchedulerClient(config)
+
+    schedules = client.get_all_schedules()
+    if not schedules:
+        print("No schedules found.")
+        return 0, 0
+
+    print(f"\nFound {len(schedules)} schedule(s):\n")
+    for schedule in sorted(schedules, key=lambda s: s.name):
+        print(f"  {schedule.name}")
+
+    if not yes and not _confirm(len(schedules), "schedule"):
+        sys.exit(0)
+
+    print()
+    deleted, errors = 0, 0
+    for schedule in schedules:
+        try:
+            client.delete_schedule(schedule.name)
+            print(f"  Deleted: {schedule.name}")
+            deleted += 1
+        except Exception as e:
+            print(f"  Failed:  {schedule.name} -> {e}")
+            errors += 1
+
+    return deleted, errors
+
+
+# ---------------------------------------------------------------------------
+# Secrets
+# ---------------------------------------------------------------------------
+
+def delete_secrets(server_url: str, yes: bool = False) -> tuple[int, int]:
+    config = Configuration(server_api_url=server_url, debug=False)
+    client = OrkesSecretClient(config)
+
+    secret_names = sorted(client.list_all_secret_names())
+    if not secret_names:
+        print("No secrets found.")
+        return 0, 0
+
+    print(f"\nFound {len(secret_names)} secret(s):\n")
+    for name in secret_names:
+        print(f"  {name}")
+
+    if not yes and not _confirm(len(secret_names), "secret"):
+        sys.exit(0)
+
+    print()
+    deleted, errors = 0, 0
+    for name in secret_names:
+        try:
+            client.delete_secret(name)
+            print(f"  Deleted: {name}")
+            deleted += 1
+        except Exception as e:
+            print(f"  Failed:  {name} -> {e}")
             errors += 1
 
     return deleted, errors

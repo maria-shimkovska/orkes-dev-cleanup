@@ -5,6 +5,9 @@ Usage:
   orkes-cleanup workflows   Delete all workflow definitions
   orkes-cleanup tasks       Delete all task definitions
   orkes-cleanup forms       Delete all user form templates
+  orkes-cleanup prompts     Delete all AI prompts
+  orkes-cleanup schedules   Delete all schedules
+  orkes-cleanup secrets     Delete all secrets
   orkes-cleanup all         Delete everything above
 
 Set these env vars before running:
@@ -17,7 +20,14 @@ import argparse
 import sys
 
 from .auth import get_config
-from .commands import delete_workflows, delete_tasks, delete_forms
+from .commands import (
+    delete_workflows,
+    delete_tasks,
+    delete_forms,
+    delete_prompts,
+    delete_schedules,
+    delete_secrets,
+)
 
 
 def main():
@@ -32,7 +42,7 @@ def main():
     )
     parser.add_argument(
         "resource",
-        choices=["workflows", "tasks", "forms", "all"],
+        choices=["workflows", "tasks", "forms", "prompts", "schedules", "secrets", "all"],
         help="What to delete",
     )
     parser.add_argument(
@@ -47,7 +57,9 @@ def main():
     print(f"Server: {server_url}\n")
 
     targets = (
-        ["workflows", "tasks", "forms"] if args.resource == "all" else [args.resource]
+        ["workflows", "tasks", "forms", "prompts", "schedules", "secrets"]
+        if args.resource == "all"
+        else [args.resource]
     )
 
     total_deleted = total_errors = 0
@@ -62,6 +74,12 @@ def main():
             d, e = delete_tasks(server_url, yes=args.yes)
         elif target == "forms":
             d, e = delete_forms(server_url, token, yes=args.yes)
+        elif target == "prompts":
+            d, e = delete_prompts(server_url, yes=args.yes)
+        elif target == "schedules":
+            d, e = delete_schedules(server_url, yes=args.yes)
+        elif target == "secrets":
+            d, e = delete_secrets(server_url, yes=args.yes)
 
         total_deleted += d
         total_errors += e

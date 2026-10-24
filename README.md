@@ -1,6 +1,6 @@
 # orkes-dev-cleanup
 
-A CLI tool to quickly reset your [Orkes developer edition](https://developer.orkescloud.com) environment — delete workflow definitions, task definitions, and user form templates in one command.
+A CLI tool to quickly reset your [Orkes developer edition](https://developer.orkescloud.com) environment — delete workflow definitions, task definitions, user form templates, AI prompts, schedules, and secrets in one command.
 
 ## Install
 
@@ -39,6 +39,15 @@ orkes-cleanup tasks
 
 # Delete all user form templates
 orkes-cleanup forms
+
+# Delete all AI prompts
+orkes-cleanup prompts
+
+# Delete all schedules
+orkes-cleanup schedules
+
+# Delete all secrets
+orkes-cleanup secrets
 
 # Delete everything
 orkes-cleanup all
