@@ -20,10 +20,10 @@ from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
 # ---------------------------------------------------------------------------
 
 def _confirm(count: int, noun: str) -> bool:
-    print(f"\nThis will permanently delete ALL {count} {noun}(s) listed above.")
+    print(f"\n⚠️  This will permanently delete ALL {count} {noun}(s) listed above.")
     answer = input("Type 'yes' to confirm: ").strip().lower()
     if answer != "yes":
-        print("Aborted.")
+        print("🛑 Aborted.")
         return False
     return True
 
@@ -38,14 +38,14 @@ def delete_workflows(server_url: str, yes: bool = False) -> tuple[int, int]:
 
     workflows = client.get_all_workflow_defs()
     if not workflows:
-        print("No workflow definitions found.")
+        print("✨ No workflow definitions found.")
         return 0, 0
 
     by_name: dict[str, list] = defaultdict(list)
     for wf in workflows:
         by_name[wf.name].append(wf.version)
 
-    print(f"\nFound {len(workflows)} workflow definition(s) across {len(by_name)} name(s):\n")
+    print(f"\n🔍 Found {len(workflows)} workflow definition(s) across {len(by_name)} name(s):\n")
     for name, versions in sorted(by_name.items()):
         print(f"  {name}  (versions: {sorted(versions)})")
 
@@ -57,10 +57,10 @@ def delete_workflows(server_url: str, yes: bool = False) -> tuple[int, int]:
     for wf in workflows:
         try:
             client.unregister_workflow_def(wf.name, wf.version)
-            print(f"  Deleted: {wf.name} v{wf.version}")
+            print(f"  ✅ Deleted: {wf.name} v{wf.version}")
             deleted += 1
         except Exception as e:
-            print(f"  Failed:  {wf.name} v{wf.version} -> {e}")
+            print(f"  ❌ Failed:  {wf.name} v{wf.version} -> {e}")
             errors += 1
 
     return deleted, errors
@@ -76,10 +76,10 @@ def delete_tasks(server_url: str, yes: bool = False) -> tuple[int, int]:
 
     tasks = client.get_all_task_defs()
     if not tasks:
-        print("No task definitions found.")
+        print("✨ No task definitions found.")
         return 0, 0
 
-    print(f"\nFound {len(tasks)} task definition(s):\n")
+    print(f"\n🔍 Found {len(tasks)} task definition(s):\n")
     for task in sorted(tasks, key=lambda t: t.name):
         print(f"  {task.name}")
 
@@ -91,10 +91,10 @@ def delete_tasks(server_url: str, yes: bool = False) -> tuple[int, int]:
     for task in tasks:
         try:
             client.unregister_task_def(task.name)
-            print(f"  Deleted: {task.name}")
+            print(f"  ✅ Deleted: {task.name}")
             deleted += 1
         except Exception as e:
-            print(f"  Failed:  {task.name} -> {e}")
+            print(f"  ❌ Failed:  {task.name} -> {e}")
             errors += 1
 
     return deleted, errors
@@ -110,10 +110,10 @@ def delete_prompts(server_url: str, yes: bool = False) -> tuple[int, int]:
 
     prompts = client.get_prompts()
     if not prompts:
-        print("No AI prompts found.")
+        print("✨ No AI prompts found.")
         return 0, 0
 
-    print(f"\nFound {len(prompts)} AI prompt(s):\n")
+    print(f"\n🔍 Found {len(prompts)} AI prompt(s):\n")
     for prompt in sorted(prompts, key=lambda p: p.name):
         print(f"  {prompt.name}")
 
@@ -125,10 +125,10 @@ def delete_prompts(server_url: str, yes: bool = False) -> tuple[int, int]:
     for prompt in prompts:
         try:
             client.delete_prompt(prompt.name)
-            print(f"  Deleted: {prompt.name}")
+            print(f"  ✅ Deleted: {prompt.name}")
             deleted += 1
         except Exception as e:
-            print(f"  Failed:  {prompt.name} -> {e}")
+            print(f"  ❌ Failed:  {prompt.name} -> {e}")
             errors += 1
 
     return deleted, errors
@@ -144,10 +144,10 @@ def delete_schedules(server_url: str, yes: bool = False) -> tuple[int, int]:
 
     schedules = client.get_all_schedules()
     if not schedules:
-        print("No schedules found.")
+        print("✨ No schedules found.")
         return 0, 0
 
-    print(f"\nFound {len(schedules)} schedule(s):\n")
+    print(f"\n🔍 Found {len(schedules)} schedule(s):\n")
     for schedule in sorted(schedules, key=lambda s: s.name):
         print(f"  {schedule.name}")
 
@@ -159,10 +159,10 @@ def delete_schedules(server_url: str, yes: bool = False) -> tuple[int, int]:
     for schedule in schedules:
         try:
             client.delete_schedule(schedule.name)
-            print(f"  Deleted: {schedule.name}")
+            print(f"  ✅ Deleted: {schedule.name}")
             deleted += 1
         except Exception as e:
-            print(f"  Failed:  {schedule.name} -> {e}")
+            print(f"  ❌ Failed:  {schedule.name} -> {e}")
             errors += 1
 
     return deleted, errors
@@ -178,10 +178,10 @@ def delete_secrets(server_url: str, yes: bool = False) -> tuple[int, int]:
 
     secret_names = sorted(client.list_all_secret_names())
     if not secret_names:
-        print("No secrets found.")
+        print("✨ No secrets found.")
         return 0, 0
 
-    print(f"\nFound {len(secret_names)} secret(s):\n")
+    print(f"\n🔍 Found {len(secret_names)} secret(s):\n")
     for name in secret_names:
         print(f"  {name}")
 
@@ -193,10 +193,10 @@ def delete_secrets(server_url: str, yes: bool = False) -> tuple[int, int]:
     for name in secret_names:
         try:
             client.delete_secret(name)
-            print(f"  Deleted: {name}")
+            print(f"  ✅ Deleted: {name}")
             deleted += 1
         except Exception as e:
-            print(f"  Failed:  {name} -> {e}")
+            print(f"  ❌ Failed:  {name} -> {e}")
             errors += 1
 
     return deleted, errors
@@ -215,19 +215,19 @@ def delete_forms(server_url: str, token: str, yes: bool = False) -> tuple[int, i
 
     resp = requests.get(f"{server_url}/human/template", headers=headers)
     if not resp.ok:
-        print(f"Error listing user forms: {resp.status_code} {resp.text}", file=sys.stderr)
+        print(f"❌ Error listing user forms: {resp.status_code} {resp.text}", file=sys.stderr)
         sys.exit(1)
 
     templates = resp.json()
     if not templates:
-        print("No user form templates found.")
+        print("✨ No user form templates found.")
         return 0, 0
 
     by_name: dict[str, list] = defaultdict(list)
     for t in templates:
         by_name[t["name"]].append(t["version"])
 
-    print(f"\nFound {len(templates)} user form template(s) across {len(by_name)} name(s):\n")
+    print(f"\n🔍 Found {len(templates)} user form template(s) across {len(by_name)} name(s):\n")
     for name, versions in sorted(by_name.items()):
         print(f"  {name}  (versions: {sorted(versions)})")
 
@@ -242,10 +242,10 @@ def delete_forms(server_url: str, token: str, yes: bool = False) -> tuple[int, i
             f"{server_url}/human/template/{name}/{version}", headers=headers
         )
         if r.ok:
-            print(f"  Deleted: {name} v{version}")
+            print(f"  ✅ Deleted: {name} v{version}")
             deleted += 1
         else:
-            print(f"  Failed:  {name} v{version} -> {r.status_code} {r.text}")
+            print(f"  ❌ Failed:  {name} v{version} -> {r.status_code} {r.text}")
             errors += 1
 
     return deleted, errors

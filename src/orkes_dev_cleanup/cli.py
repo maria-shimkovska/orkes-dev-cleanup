@@ -54,7 +54,7 @@ def main():
     args = parser.parse_args()
 
     server_url, token = get_config()
-    print(f"Server: {server_url}\n")
+    print(f"🌐 Server: {server_url}\n")
 
     targets = (
         ["workflows", "tasks", "forms", "prompts", "schedules", "secrets"]
@@ -66,7 +66,7 @@ def main():
 
     for target in targets:
         if len(targets) > 1:
-            print(f"--- {target.upper()} ---")
+            print(f"🧹 --- {target.upper()} ---")
 
         if target == "workflows":
             d, e = delete_workflows(server_url, yes=args.yes)
@@ -89,10 +89,10 @@ def main():
 
     print()
     if total_errors:
-        print(f"Done. {total_deleted} deleted, {total_errors} failed.")
+        print(f"⚠️  Done. {total_deleted} deleted, {total_errors} failed.")
         sys.exit(1)
     else:
-        print(f"Done. {total_deleted} item(s) deleted.")
+        print(f"🎉 Done. {total_deleted} item(s) deleted.")
 
 
 if __name__ == "__main__":
