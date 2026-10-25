@@ -11,9 +11,11 @@ Usage:
   orkes-cleanup all         Delete everything above
 
 Set these env vars before running:
-  CONDUCTOR_SERVER_URL    (default: https://developer.orkescloud.com/api)
   CONDUCTOR_AUTH_KEY
   CONDUCTOR_AUTH_SECRET
+
+Only targets https://developer.orkescloud.com/api — this tool is destructive
+and cannot be pointed at any other Orkes server.
 """
 
 import argparse
@@ -37,7 +39,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Set CONDUCTOR_AUTH_KEY and CONDUCTOR_AUTH_SECRET before running.\n"
-            "CONDUCTOR_SERVER_URL defaults to https://developer.orkescloud.com/api"
+            "Only targets https://developer.orkescloud.com/api"
         ),
     )
     parser.add_argument(

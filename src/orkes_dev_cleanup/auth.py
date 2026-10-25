@@ -4,15 +4,27 @@ import sys
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 
+ALLOWED_SERVER_URL = "https://developer.orkescloud.com/api"
+
 
 def get_config() -> tuple[str, str]:
     """
-    Read env vars, build a Configuration, fetch a token via the SDK, and
-    return (server_url, bearer_token).
+    Build a Configuration for the Orkes developer-edition server, fetch a
+    token via the SDK, and return (server_url, bearer_token).
+
+    The server URL is hardcoded to developer.orkescloud.com — this tool is
+    destructive and is not allowed to target any other Orkes instance.
     """
-    server_url = os.environ.get(
-        "CONDUCTOR_SERVER_URL", "https://developer.orkescloud.com/api"
-    ).rstrip("/")
+    stray_url = os.environ.get("CONDUCTOR_SERVER_URL")
+    if stray_url and stray_url.rstrip("/") != ALLOWED_SERVER_URL:
+        print(
+            f"Error: orkes-cleanup only targets {ALLOWED_SERVER_URL}.\n"
+            f"CONDUCTOR_SERVER_URL is set to {stray_url!r} — unset it to continue.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    server_url = ALLOWED_SERVER_URL
     auth_key = os.environ.get("CONDUCTOR_AUTH_KEY")
     auth_secret = os.environ.get("CONDUCTOR_AUTH_SECRET")
 
